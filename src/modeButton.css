@@ -1,0 +1,13 @@
+.mode_button {
+  border: none;
+  background-color: transparent;
+  font-size: 2rem;
+}
+
+.mode_button:focus {
+  outline: none;
+}
+
+.mode_button_selected {
+  color: rgb(255, 45, 85);
+}
