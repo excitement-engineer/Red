@@ -2,21 +2,21 @@ open Utils;
 
 open ReasonReact;
 
-requireCSS "./controls.css";
+requireCSS("./controls.css");
 
-external playIcon : string = "./svg/pause.svg" [@@bs.module];
+[@bs.module] external playIcon : string = "./svg/pause.svg";
 
-external pauseIcon : string = "./svg/play.svg" [@@bs.module];
+[@bs.module] external pauseIcon : string = "./svg/play.svg";
 
-let component = statelessComponent "Controls";
+let component = statelessComponent("Controls");
 
 type control =
   | Play
   | Pause;
 
-let make ::mode ::onClick _children => {
+let make = (~mode, ~onClick, _children) => {
   ...component,
-  render: fun _self => {
+  render: (_self) => {
     let icon =
       switch mode {
       | Play => playIcon

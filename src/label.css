@@ -1,7 +1,15 @@
 .time {
-  text-align: center;
   font-weight: bold;
   font-size: 9rem;
+}
+
+.completedCount {
+  font-size: 2rem;
+  color: #BDBDBD;
+}
+
+.time, .completedCount {
+  text-align: center;
 }
 
 @media only screen and (max-width: 600px) {

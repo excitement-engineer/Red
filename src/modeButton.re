@@ -1,13 +1,13 @@
-Utils.requireCSS "./modeButton.css";
+Utils.requireCSS("./modeButton.css");
 
-let component = ReasonReact.statelessComponent "ModeButton";
+let component = ReasonReact.statelessComponent("ModeButton");
 
-let make ::selected ::onClick ::label _children => {
+let make = (~selected, ~onClick, ~label, _children) => {
   ...component,
-  render: fun _self => {
-    let classNames = "mode_button" ^ (selected ? " mode_button_selected" : "");
+  render: (_self) => {
+    let classNames = "mode_button" ++ (selected ? " mode_button_selected" : "");
     <button className=classNames onClick>
-      (ReasonReact.stringToElement (String.uppercase label))
+      (ReasonReact.stringToElement(String.uppercase(label)))
     </button>
   }
 };

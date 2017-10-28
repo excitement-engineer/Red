@@ -1,7 +1,7 @@
 type audio;
 
-external make : string => audio = "Audio" [@@bs.new];
+[@bs.new] external make : string => audio = "Audio";
 
-external play : audio => unit = "play" [@@bs.send];
+[@bs.send] external play : audio => unit = "play";
 
-external pause : audio => unit = "pause" [@@bs.send];
+[@bs.send] external pause : audio => unit = "pause";

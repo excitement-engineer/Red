@@ -1,11 +1,11 @@
-Utils.requireCSS "./timeLabel.css";
+Utils.requireCSS("./label.css");
 
-let component = ReasonReact.statelessComponent "ModeButton";
+let component = ReasonReact.statelessComponent("TimeLabel");
 
-let make ::secondsLeft _children => {
+let make = (~secondsLeft, _children) => {
   ...component,
-  render: fun _self => {
-    let convertedTime = Utils.convertSecsToTime secondsLeft;
-    <label className="time"> (ReasonReact.stringToElement convertedTime) </label>
+  render: (_self) => {
+    let convertedTime = Utils.convertSecsToTime(secondsLeft);
+    <label className="time"> (ReasonReact.stringToElement(convertedTime)) </label>
   }
 };

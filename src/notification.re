@@ -1,7 +1,7 @@
 type notification;
 
-type content = Js.t {. body : string};
+type content = {. "body": string};
 
-external make : string => content => notification = "Notification" [@@bs.new];
+[@bs.new] external make : (string, content) => notification = "Notification";
 
-external requestPermission : unit => unit = "Notification.requestPermission" [@@bs.val];
+[@bs.val] external requestPermission : unit => unit = "Notification.requestPermission";
