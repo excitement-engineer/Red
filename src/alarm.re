@@ -10,7 +10,7 @@ let register = () =>
   };
 
 let alarm = (~title, ~message) => {
-  let content: content = {"body": message};
+  let content: content = {"body": message, "icon": "https://red.now.sh/favicon.ico"};
   let notify = () => {
     ignore(Notification.make(title, content));
     let audio = Audio.make(alarmSound);

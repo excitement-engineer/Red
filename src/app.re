@@ -43,9 +43,9 @@ let updateMode = state => {
   UpdateWithSideEffects({...state, timeLeft: secondsForMode(mode), mode, completeCount, paused: true}, (_) => {
     let message =
       switch state.mode {
-      | Pomodoro => "You finished your pomodoro! " ++ (shouldUpdateToLongBreak ? "Time to relax!" : "Time for a break!")
-      | LongBreak => "Relax time is up! Time for some work!"
-      | ShortBreak => "Break's done, time for some work!"
+      | Pomodoro => (shouldUpdateToLongBreak ? "Time to relax!" : "Time for a break!")
+      | LongBreak => "Time for some work!"
+      | ShortBreak => "Time for some work!"
       };
     Alarm.alarm(~message, ~title="Time's up");
   });
