@@ -17,7 +17,7 @@ type action =
 
 type state = {
   paused: bool,
-  count: int,
+  timeLeft: int,
   timerId: ref(option(Js.Global.intervalId)),
   mode,
   completeCount: int
@@ -40,7 +40,7 @@ let updateMode = state => {
       | ShortBreak => Pomodoro
   };
 
-  UpdateWithSideEffects({...state, count: secondsForMode(mode), mode, completeCount, paused: true}, (_) => {
+  UpdateWithSideEffects({...state, timeLeft: secondsForMode(mode), mode, completeCount, paused: true}, (_) => {
     let message =
       switch state.mode {
       | Pomodoro => "You finished your pomodoro! " ++ (shouldUpdateToLongBreak ? "Time to relax!" : "Time for a break!")
@@ -52,35 +52,31 @@ let updateMode = state => {
 };
 
 let updateCount = state => {
-  let count =
+  let timeLeft =
     if (state.paused) {
-      state.count
-    } else if (state.count == 0) {
+      state.timeLeft
+    } else if (state.timeLeft == 0) {
       0
     } else {
-      state.count - 1
+      state.timeLeft - 1
     };
-  Update({...state, count});
+  Update({...state, timeLeft});
 };
 
 let component = reducerComponent("App");
 
 let make = (_children) => {
   ...component,
-  initialState: () => {mode: Pomodoro, paused: false, count: secondsForMode(Pomodoro), timerId: ref(None), completeCount: 0},
+  initialState: () => {mode: Pomodoro, paused: false, timeLeft: secondsForMode(Pomodoro), timerId: ref(None), completeCount: 0},
   reducer: (action, state) =>
     switch action {
     | TogglePausePlay => Update({...state, paused: ! state.paused})
     | Tick =>
-      let taskFinished = state.count == 1  && !state.paused;
-      if (taskFinished) {
-        updateMode(state);
-      } else {
-        updateCount(state);
-      };
-    | StartShortBreak => Update({...state, mode: ShortBreak, count: secondsForMode(ShortBreak)})
-    | StartLongBreak => Update({...state, mode: LongBreak, count: secondsForMode(LongBreak)})
-    | StartPomodoro => Update({...state, mode: Pomodoro, count: secondsForMode(Pomodoro)})
+      let timeIsUp = state.timeLeft == 1  && !state.paused;
+      timeIsUp ? updateMode(state) : updateCount(state)
+    | StartShortBreak => Update({...state, mode: ShortBreak, timeLeft: secondsForMode(ShortBreak)})
+    | StartLongBreak => Update({...state, mode: LongBreak, timeLeft: secondsForMode(LongBreak)})
+    | StartPomodoro => Update({...state, mode: Pomodoro, timeLeft: secondsForMode(Pomodoro)})
     },
   didMount: (self) => {
     Alarm.register();
@@ -96,7 +92,7 @@ let make = (_children) => {
     let mode = state.paused ? Controls.Play : Controls.Pause;
     <div className="app">
       <div className="container">
-        <TimeLabel secondsLeft=state.count />
+        <TimeLabel secondsLeft=state.timeLeft />
         <div className="control_container">
           <Controls mode onClick=(reduce((_) => TogglePausePlay)) />
         </div>
