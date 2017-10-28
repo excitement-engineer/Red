@@ -3,8 +3,6 @@ open Utils;
 
 requireCSS("./label.css");
 
-[@bs.module] external historyIcon : string = "./svg/history.svg";
-
 let component = statelessComponent("CompletedLabel");
 
 let make = (~completedCount, _children) => {
