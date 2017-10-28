@@ -1,6 +1,7 @@
 type audio;
+type path = string;
 
-[@bs.new] external make : string => audio = "Audio";
+[@bs.new] external make : path => audio = "Audio";
 
 [@bs.send] external play : audio => unit = "play";
 

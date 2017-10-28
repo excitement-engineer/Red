@@ -1,5 +1,4 @@
 open Utils;
-
 open ReasonReact;
 
 requireCSS("./app.css");
@@ -40,18 +39,10 @@ let make = (_children) => {
     | TogglePausePlay => Update({...state, paused: ! state.paused})
     | Tick =>
     
-      let taskFinished = state.count == 1 ;
+      let taskFinished = state.count == 1  && !state.paused;
       
       let completeCount = taskFinished && state.mode == Pomodoro ? state.completeCount + 1 : state.completeCount;
       
-      let completeCount = {
-        if (state.count == 1 && state.mode == Pomodoro) {
-          state.completeCount + 1
-        }
-        else {
-          state.completeCount
-        }
-      };
       let count =
         if (state.paused) {
           state.count
@@ -61,7 +52,17 @@ let make = (_children) => {
           state.count - 1
         };
         
-      Update({...state, count, completeCount})
+      UpdateWithSideEffects({...state, count, completeCount}, ({ state }) => {
+        if (taskFinished) {
+          let message =
+            switch state.mode {
+            | Pomodoro => "You finished your pomodoro! Time for a break!"
+            | LongBreak => "Relax time is up! Time for some work!"
+            | ShortBreak => "Break's done, time for some work!"
+            };
+          Alarm.alarm(~message, ~title="Time's up");
+        }
+      });
     | StartShortBreak => Update({...state, mode: ShortBreak, count: shortBreak})
     | StartLongBreak => Update({...state, mode: LongBreak, count: longBreak})
     | StartPomodoro => Update({...state, mode: Pomodoro, count: pomodoroTime})
@@ -71,23 +72,13 @@ let make = (_children) => {
     self.state.timerId := Some(Js.Global.setInterval(self.reduce((_) => Tick), 1000));
     NoUpdate
   },
-  didUpdate: ({oldSelf, newSelf}) =>
-    if (oldSelf.state.count > 0 && newSelf.state.count == 0) {
-      let message =
-        switch newSelf.state.mode {
-        | Pomodoro => "You finished your pomodoro! Time for a break!"
-        | LongBreak => "Relax time is up! Time for some work!"
-        | ShortBreak => "Break's done, time for some work!"
-        };
-      Alarm.alarm(~message, ~title="Time's up");
-    },
   willUnmount: ({state}) =>
     switch state.timerId^ {
     | Some(id) => Js.Global.clearInterval(id)
     | _ => ()
     },
   render: ({state, reduce}) => {
-    let mode = state.paused == true ? Controls.Play : Controls.Pause;
+    let mode = state.paused ? Controls.Play : Controls.Pause;
     <div className="app">
       <div className="container">
         <TimeLabel secondsLeft=state.count />
