@@ -1,4 +1,5 @@
 open Utils;
+
 open ReasonReact;
 
 requireCSS("./app.css");
@@ -23,35 +24,37 @@ type state = {
   completeCount: int
 };
 
-let secondsForMode = mode => switch(mode) {
-    | Pomodoro => 25 * 60
-    | ShortBreak => 5 * 60
-    | LongBreak => 15 * 60
+let secondsForMode = (mode) =>
+  switch mode {
+  | Pomodoro => 25 * 60
+  | ShortBreak => 5 * 60
+  | LongBreak => 15 * 60
   };
 
-let updateMode = state => {
+let updateMode = (state) => {
   let completeCount = state.mode == Pomodoro ? state.completeCount + 1 : state.completeCount;
-  
   let shouldUpdateToLongBreak = completeCount mod 4 == 0;
-
-  let mode = switch(state.mode) {
-      | Pomodoro => shouldUpdateToLongBreak ? LongBreak : ShortBreak
-      | LongBreak => Pomodoro
-      | ShortBreak => Pomodoro
-  };
-
-  UpdateWithSideEffects({...state, timeLeft: secondsForMode(mode), mode, completeCount, paused: true}, (_) => {
-    let message =
-      switch state.mode {
-      | Pomodoro => (shouldUpdateToLongBreak ? "Time to relax!" : "Time for a break!")
-      | LongBreak => "Time for some work!"
-      | ShortBreak => "Time for some work!"
-      };
-    Alarm.alarm(~message, ~title="Time's up");
-  });
+  let mode =
+    switch state.mode {
+    | Pomodoro => shouldUpdateToLongBreak ? LongBreak : ShortBreak
+    | LongBreak => Pomodoro
+    | ShortBreak => Pomodoro
+    };
+  UpdateWithSideEffects(
+    {...state, timeLeft: secondsForMode(mode), mode, completeCount, paused: true},
+    (_) => {
+      let message =
+        switch state.mode {
+        | Pomodoro => shouldUpdateToLongBreak ? "Time to relax!" : "Time for a break!"
+        | LongBreak => "Time for some work!"
+        | ShortBreak => "Time for some work!"
+        };
+      Alarm.alarm(~message, ~title="Time's up")
+    }
+  )
 };
 
-let updateCount = state => {
+let updateTimeLeft = (state) => {
   let timeLeft =
     if (state.paused) {
       state.timeLeft
@@ -60,20 +63,26 @@ let updateCount = state => {
     } else {
       state.timeLeft - 1
     };
-  Update({...state, timeLeft});
+  Update({...state, timeLeft})
 };
 
 let component = reducerComponent("App");
 
 let make = (_children) => {
   ...component,
-  initialState: () => {mode: Pomodoro, paused: false, timeLeft: secondsForMode(Pomodoro), timerId: ref(None), completeCount: 0},
+  initialState: () => {
+    mode: Pomodoro,
+    paused: false,
+    timeLeft: secondsForMode(Pomodoro),
+    timerId: ref(None),
+    completeCount: 0
+  },
   reducer: (action, state) =>
     switch action {
     | TogglePausePlay => Update({...state, paused: ! state.paused})
     | Tick =>
-      let timeIsUp = state.timeLeft == 1  && !state.paused;
-      timeIsUp ? updateMode(state) : updateCount(state)
+      let timeIsUp = state.timeLeft == 1 && ! state.paused;
+      timeIsUp ? updateMode(state) : updateTimeLeft(state)
     | StartShortBreak => Update({...state, mode: ShortBreak, timeLeft: secondsForMode(ShortBreak)})
     | StartLongBreak => Update({...state, mode: LongBreak, timeLeft: secondsForMode(LongBreak)})
     | StartPomodoro => Update({...state, mode: Pomodoro, timeLeft: secondsForMode(Pomodoro)})
