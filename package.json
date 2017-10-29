@@ -1,5 +1,5 @@
 {
-  "name": "pomodoro",
+  "name": "red",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -13,7 +13,7 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "prepare": "npm link bs-platform",
-    "deploy": "npm run build && cd build && now --public --name pomodoro"
+    "deploy": "npm run build && now ./build --name red --public && now alias"
   },
   "devDependencies": {
     "bs-jest": "^0.1.0",
