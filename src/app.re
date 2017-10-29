@@ -124,6 +124,7 @@ let make = (_children) => {
         </div>
         <CompletedLabel completedCount=state.completeCount />
       </div>
+      <div className="footer"> <Footer /> </div>
     </div>
   }
 };

@@ -21,6 +21,11 @@
   flex-direction: row;
 }
 
+.footer {
+  position: absolute;
+  bottom: 8px;
+}
+
 @media only screen and (max-width: 600px) {
   .modes_container {
     flex-direction: column;

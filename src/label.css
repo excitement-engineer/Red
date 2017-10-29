@@ -5,7 +5,10 @@
 
 .completedCount {
   font-size: 2rem;
-  color: #BDBDBD;
+}
+
+.footerText {
+  font-size: 0.75rem;
 }
 
 .time, .completedCount {

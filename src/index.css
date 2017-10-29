@@ -10,3 +10,15 @@ body {
   font-family: "Roboto", sans-serif;
   font-weight: 300;
 }
+
+a {
+text-decoration: none;
+}
+
+.red {
+  color: rgb(255, 45, 85);
+}
+
+.grey {
+  color: #BDBDBD;
+}
