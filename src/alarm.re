@@ -14,8 +14,7 @@ let alarm = (~title, ~message) => {
   let notify = () => {
     ignore(Notification.make(title, content));
     let audio = Audio.make(alarmSound);
-    play(audio);
-    ignore(Js.Global.setTimeout(() => pause(audio), 2900))
+    play(audio)
   };
   try (notify()) {
   | _ => Js.log("Error sending notification.")
